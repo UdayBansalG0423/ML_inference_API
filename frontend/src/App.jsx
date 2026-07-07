@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Activity, AlertCircle, CheckCircle2, ChevronRight, Info, Droplets, RotateCcw } from 'lucide-react';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://ml-inference-api.onrender.com';
 
 const FEATURES_CONFIG = [
   { name: 'age', label: 'Age', tooltip: 'Age in years', min: 0, max: 120, step: 1, type: 'number' },
