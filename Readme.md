@@ -1,76 +1,77 @@
-🚀 Production-Ready ML Inference API
-📌 Overview
+# 🚀 Diabetes Risk Predictor
 
-This project demonstrates an end-to-end Machine Learning engineering pipeline, from model training to cloud deployment.
-A trained ML model is served as a REST API using FastAPI, containerized with Docker, and deployed on AWS EC2.
+This project is an end-to-end Machine Learning engineering pipeline, from model training to cloud deployment, featuring a modern web interface.
 
-🧠 Problem Statement
+A trained ML model is served as a REST API using FastAPI, containerized with Docker, and connected to a React frontend built with Vite and Tailwind CSS.
 
-Predict diabetes risk using medical features while ensuring:
+## 📁 Project Structure
 
-reproducible training
+The project is divided into two main components:
 
-safe inference
+- **`/backend`**: The Python FastAPI application and Machine Learning pipeline.
+- **`/frontend`**: The React Single-Page Application (SPA) built with Vite and Tailwind CSS.
 
-low-latency predictions
+---
 
-production-ready deployment
+## ⚙️ Backend (Machine Learning & API)
 
-🏗️ System Architecture
-Client → FastAPI → ML Pipeline → Prediction
-               ↓
-           Docker Container
-               ↓
-             AWS EC2
+**Tech Stack**: FastAPI, Scikit-learn, joblib, Docker, AWS EC2 / Render
 
+### Features
+- Predicts diabetes risk using medical features (Age, BMI, Blood Pressure, etc.).
+- Robust data preprocessing using scikit-learn Pipelines.
+- CORS-enabled for seamless frontend integration.
+- Latency and prediction logging for MLOps tracking.
 
-(Add a simple diagram later if you want)
+### Running Locally (with Docker)
 
-⚙️ Tech Stack
-
-ML: Scikit-learn, NumPy
-
-Backend: FastAPI
-
-MLOps: Docker, Joblib
-
-Cloud: AWS EC2
-
-API Docs: Swagger (OpenAPI)
-
-🔬 ML Engineering Highlights
-
-Implemented training–inference separation
-
-Used sklearn Pipelines to prevent preprocessing mismatch
-
-Added input validation & error handling
-
-Logged predictions, errors, and inference latency
-
-Versioned ML models for safe rollback
-
-🚀 Run Locally (Docker)
+Navigate to the backend directory and build the image:
+```bash
+cd backend
 docker build -t ml-api .
 docker run -p 8000:8000 ml-api
+```
+The API will be available at `http://localhost:8000`. You can view the interactive documentation at `http://localhost:8000/docs`.
 
+### Running Locally (without Docker)
+```bash
+cd backend
+pip install -r requirements.txt
+uvicorn app:app --reload --host 0.0.0.0 --port 8000
+```
 
-Open:
+---
 
-http://localhost:8000/docs
+## 🎨 Frontend (User Interface)
 
-☁️ Cloud Deployment
+**Tech Stack**: React, Vite, Tailwind CSS v4, Lucide React Icons
 
-Deployed Dockerized API on AWS EC2
+### Features
+- Clean, modern health-tech aesthetic with a card-based layout.
+- "Load Sample Data" feature for quick testing.
+- Live animated gauge displaying the risk probability.
+- Input validation and graceful API error handling.
 
-Exposed service via public endpoint
+### Running Locally
 
-API accessible using Swagger UI
+Ensure you have Node.js installed, then navigate to the frontend directory:
+```bash
+cd frontend
+npm install
+npm run dev
+```
+The web app will be available at `http://localhost:5173`. 
+*(Note: If testing locally, update `API_BASE_URL` in `src/App.jsx` to point to `http://localhost:8000`)*
 
-📈 Future Improvements
+---
 
-Model monitoring & drift detection
+## ☁️ Cloud Deployment
 
-CI/CD pipeline
+- **Backend** is deployed on Render / AWS EC2.
+- **Frontend** can be deployed easily on Vercel or Netlify using the `npm run build` command and setting the output directory to `dist`.
 
-Auto-scaling with load balancer
+## 📈 Future Improvements
+
+- Model monitoring & drift detection.
+- Full CI/CD pipeline integration.
+- Auto-scaling with a load balancer.

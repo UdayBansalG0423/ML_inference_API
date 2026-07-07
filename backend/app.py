@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import joblib
 import numpy as np
@@ -23,6 +24,14 @@ app = FastAPI(
     description="ML inference service using FastAPI",
     version="1.0"
 )
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 class DiabetesInput(BaseModel):
     features: list[float]
 def validate_input(features, expected_features=10):
