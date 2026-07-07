@@ -7,7 +7,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report
 
 # Load data
-data = load_diabetes()
+data = load_diabetes(scaled=False)
 X = data.data
 y = (data.target > data.target.mean()).astype(int)
 
@@ -30,4 +30,4 @@ y_pred = pipeline.predict(X_test)
 print(classification_report(y_test, y_pred))
 
 # Save pipeline (model + preprocessing together)
-joblib.dump(pipeline, "diabetes_pipeline_v1.joblib")
+joblib.dump(pipeline, "model/diabetes_model_v1.joblib")

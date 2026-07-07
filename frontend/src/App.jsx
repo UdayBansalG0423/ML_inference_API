@@ -1,22 +1,22 @@
 import React, { useState } from 'react';
 import { Activity, AlertCircle, CheckCircle2, ChevronRight, Info, Droplets, RotateCcw } from 'lucide-react';
 
-const API_BASE_URL = 'https://ml-inference-api.onrender.com';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 
 const FEATURES_CONFIG = [
-  { name: 'age', label: 'Age', tooltip: 'Age (scaled)', min: -0.2, max: 0.2, step: 0.001 },
-  { name: 'sex', label: 'Sex', tooltip: 'Sex (scaled)', min: -0.2, max: 0.2, step: 0.001 },
-  { name: 'bmi', label: 'Body Mass Index (BMI)', tooltip: 'BMI (scaled)', min: -0.2, max: 0.2, step: 0.001 },
-  { name: 'bp', label: 'Blood Pressure', tooltip: 'Average blood pressure (scaled)', min: -0.2, max: 0.2, step: 0.001 },
-  { name: 's1', label: 'Total Serum Cholesterol (S1)', tooltip: 'tc, T-Cells (scaled)', min: -0.2, max: 0.2, step: 0.001 },
-  { name: 's2', label: 'Low-Density Lipoproteins (S2)', tooltip: 'ldl (scaled)', min: -0.2, max: 0.2, step: 0.001 },
-  { name: 's3', label: 'High-Density Lipoproteins (S3)', tooltip: 'hdl (scaled)', min: -0.2, max: 0.2, step: 0.001 },
-  { name: 's4', label: 'Total Cholesterol / HDL (S4)', tooltip: 'tch (scaled)', min: -0.2, max: 0.2, step: 0.001 },
-  { name: 's5', label: 'Log of Serum Triglycerides (S5)', tooltip: 'ltg (scaled)', min: -0.2, max: 0.2, step: 0.001 },
-  { name: 's6', label: 'Blood Sugar Level (S6)', tooltip: 'glu (scaled)', min: -0.2, max: 0.2, step: 0.001 },
+  { name: 'age', label: 'Age', tooltip: 'Age in years', min: 0, max: 120, step: 1, type: 'number' },
+  { name: 'sex', label: 'Sex', tooltip: 'Biological Sex', type: 'select', options: [{value: 1, label: 'Male'}, {value: 2, label: 'Female'}] },
+  { name: 'bmi', label: 'Body Mass Index (BMI)', tooltip: 'Weight in kg / (height in m)^2', min: 10, max: 60, step: 0.1, type: 'number' },
+  { name: 'bp', label: 'Blood Pressure', tooltip: 'Average blood pressure', min: 50, max: 200, step: 1, type: 'number' },
+  { name: 's1', label: 'Total Serum Cholesterol (S1)', tooltip: 'tc, T-Cells', min: 50, max: 400, step: 1, type: 'number' },
+  { name: 's2', label: 'Low-Density Lipoproteins (S2)', tooltip: 'ldl', min: 30, max: 300, step: 1, type: 'number' },
+  { name: 's3', label: 'High-Density Lipoproteins (S3)', tooltip: 'hdl', min: 10, max: 150, step: 1, type: 'number' },
+  { name: 's4', label: 'Total Cholesterol / HDL (S4)', tooltip: 'tch', min: 1.0, max: 10.0, step: 0.1, type: 'number' },
+  { name: 's5', label: 'Log of Serum Triglycerides (S5)', tooltip: 'ltg', min: 2.0, max: 8.0, step: 0.01, type: 'number' },
+  { name: 's6', label: 'Blood Sugar Level (S6)', tooltip: 'glu', min: 50, max: 250, step: 1, type: 'number' },
 ];
 
-const SAMPLE_DATA = [0.038, 0.050, 0.061, 0.021, -0.044, -0.034, -0.043, -0.002, 0.019, -0.017];
+const SAMPLE_DATA = [59, 2, 32.1, 101, 157, 93.2, 38, 4, 4.86, 87];
 
 export default function App() {
   const [formData, setFormData] = useState(Array(10).fill(''));
@@ -145,18 +145,33 @@ export default function App() {
                         </div>
                       </label>
                       <div className="relative">
-                        <input
-                          id={config.name}
-                          type="number"
-                          step={config.step}
-                          min={config.min}
-                          max={config.max}
-                          placeholder={`e.g. ${config.min} to ${config.max}`}
-                          value={formData[idx]}
-                          onChange={(e) => handleInputChange(idx, e.target.value)}
-                          required
-                          className="block w-full rounded-lg border-slate-300 border px-3 py-2 text-slate-900 shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm transition-colors"
-                        />
+                        {config.type === 'select' ? (
+                          <select
+                            id={config.name}
+                            value={formData[idx]}
+                            onChange={(e) => handleInputChange(idx, e.target.value)}
+                            required
+                            className="block w-full rounded-lg border-slate-300 border px-3 py-2 text-slate-900 shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm transition-colors bg-white"
+                          >
+                            <option value="" disabled>Select...</option>
+                            {config.options.map(opt => (
+                              <option key={opt.value} value={opt.value}>{opt.label}</option>
+                            ))}
+                          </select>
+                        ) : (
+                          <input
+                            id={config.name}
+                            type={config.type}
+                            step={config.step}
+                            min={config.min}
+                            max={config.max}
+                            placeholder={`e.g. ${config.min} to ${config.max}`}
+                            value={formData[idx]}
+                            onChange={(e) => handleInputChange(idx, e.target.value)}
+                            required
+                            className="block w-full rounded-lg border-slate-300 border px-3 py-2 text-slate-900 shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm transition-colors"
+                          />
+                        )}
                       </div>
                     </div>
                   ))}
