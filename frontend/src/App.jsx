@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Activity, AlertCircle, CheckCircle2, ChevronRight, Info, Droplets, RotateCcw } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Activity, AlertCircle, CheckCircle2, ChevronRight, Info, Droplets, RotateCcw, Server } from 'lucide-react';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://ml-inference-api.onrender.com';
 
@@ -23,6 +23,13 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
+  const [isLongRequest, setIsLongRequest] = useState(false);
+
+  useEffect(() => {
+    // Ping the backend on initial load to wake up the Render free tier server
+    // It might fail or return 404/method not allowed, but it's enough to wake the instance
+    fetch(`${API_BASE_URL}/docs`).catch(() => {});
+  }, []);
 
   const handleInputChange = (index, value) => {
     const newData = [...formData];
@@ -43,6 +50,12 @@ export default function App() {
     setLoading(true);
     setError(null);
     setResult(null);
+    setIsLongRequest(false);
+
+    // If request takes more than 2.5s, assume Render server is waking up
+    const timeoutId = setTimeout(() => {
+      setIsLongRequest(true);
+    }, 2500);
 
     try {
       const features = formData.map((val) => {
@@ -75,7 +88,9 @@ export default function App() {
     } catch (err) {
       setError(err.message || "Failed to connect to the prediction server.");
     } finally {
+      clearTimeout(timeoutId);
       setLoading(false);
+      setIsLongRequest(false);
     }
   };
 
@@ -183,6 +198,16 @@ export default function App() {
                     <div>
                       <h3 className="text-sm font-medium text-red-800">Error predicting risk</h3>
                       <p className="mt-1 text-sm text-red-700">{error}</p>
+                    </div>
+                  </div>
+                )}
+
+                {isLongRequest && (
+                  <div className="rounded-lg bg-blue-50 p-4 border border-blue-100 flex items-start animate-pulse">
+                    <Server className="h-5 w-5 text-blue-500 mt-0.5 mr-3 flex-shrink-0" />
+                    <div>
+                      <h3 className="text-sm font-medium text-blue-800">Waking up the server...</h3>
+                      <p className="mt-1 text-sm text-blue-700">Since this demo uses a free hosting tier, the backend might take up to 50 seconds to spin up if it was inactive. Hang tight!</p>
                     </div>
                   </div>
                 )}
